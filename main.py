@@ -1,6 +1,6 @@
 import argparse
 from argparse import ArgumentError, ArgumentTypeError
-
+from inference import Inference
 
 class ArgumentSelectError(Exception):
     pass
@@ -70,6 +70,13 @@ if __name__ == '__main__':
                 raise ArgumentSelectError('Predict type not specified. Can not predict.')
             else:
                 print('Inference!')
+                inf = Inference(model_path=f'models/{args.predict_type}.h5',
+                                sample_dir='samples',
+                                inference_type=args.predict_type,
+                                inference_csv=f'data/{args.predict_type}.csv')
+
+                inf.predict(save_result=True)
+                print('Inference Completed!')
 
     except ArgumentSelectError as err:
         print(err)

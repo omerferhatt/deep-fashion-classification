@@ -150,3 +150,6 @@ cython_debug/
 data/
 models/
 notebooks/
+.idea/vcs.xml
+.idea/workspace.xml
+
