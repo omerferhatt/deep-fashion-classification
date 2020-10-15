@@ -75,3 +75,13 @@ Required large file links below:
 - Training images: https://drive.google.com/file/d/1oMbEqVW16nlxXGLx8TeeQ-evrZMJHcVF/view?usp=sharing
 - CSV file for dataset: https://drive.google.com/file/d/19jP57kJ3pI-PkDlXdwQLAV6WvPM2P-z5/view?usp=sharing
 - Category Labels: https://drive.google.com/file/d/1go3SOylcSNrX-ZRf6C9Ld0P2FjQ5Ut_K/view?usp=sharing
+
+# Citations
+
+	@inproceedings{liuLQWTcvpr16DeepFashion,
+	 author = {Liu, Ziwei and Luo, Ping and Qiu, Shi and Wang, Xiaogang and Tang, Xiaoou},
+	 title = {DeepFashion: Powering Robust Clothes Recognition and Retrieval with Rich Annotations},
+	 booktitle = {Proceedings of IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
+	 month = {June},
+	 year = {2016} 
+	 }
