@@ -75,3 +75,4 @@ Required large file links below:
 - Training images: https://drive.google.com/file/d/1oMbEqVW16nlxXGLx8TeeQ-evrZMJHcVF/view?usp=sharing
 - CSV file for dataset: https://drive.google.com/file/d/19jP57kJ3pI-PkDlXdwQLAV6WvPM2P-z5/view?usp=sharing
 - Category Labels: https://drive.google.com/file/d/1go3SOylcSNrX-ZRf6C9Ld0P2FjQ5Ut_K/view?usp=sharing
+- Category Model File: https://drive.google.com/file/d/1r8zJ9XotrjpXvlBgbQbpNAHaCJTPUvjY/view?usp=sharing
