@@ -79,7 +79,7 @@ if __name__ == '__main__':
                 )
 
                 fm = FashionModel()
-                fm.create_model(num_classes=train_dataset.num_classes, batch_size=train_dataset.batch_size)
+                fm.create_model(num_classes=train_dataset.num_classes)
                 fm.model.summary()
 
                 trainer = Trainer(
