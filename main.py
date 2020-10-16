@@ -88,7 +88,7 @@ if __name__ == '__main__':
                     val_gen=train_dataset.validation_generator,
                     epoch=20,
                 )
-                trainer.train()
+                trainer.train(log_dir=args.log_dir)
 
                 print('Training Finished!')
         elif args.predict:

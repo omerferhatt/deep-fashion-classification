@@ -1,4 +1,6 @@
 import tensorflow as tf
+import os
+import datetime
 
 
 class Trainer(object):
@@ -12,10 +14,11 @@ class Trainer(object):
         self.step_size_train = self.train_gen.n // self.train_gen.batch_size
         self.step_size_val = self.val_gen.n // self.val_gen.batch_size
 
-    def train(self):
+    def train(self, log_dir):
         scheduler_callback = tf.keras.callbacks.LearningRateScheduler(self.scheduler)
+        logdir = os.path.join(log_dir, datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
         tensorboard_callback = tf.keras.callbacks.TensorBoard(
-            log_dir="logs/",
+            log_dir=logdir,
             histogram_freq=1,
             write_graph=True,
             write_images=True,
