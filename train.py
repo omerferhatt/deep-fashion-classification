@@ -23,7 +23,7 @@ class Trainer(object):
             write_graph=True,
             write_images=True,
             update_freq="epoch",
-            profile_batch=10)
+            profile_batch=150)
 
         self.model.fit(
             x=self.train_gen,
