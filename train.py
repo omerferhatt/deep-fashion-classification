@@ -15,28 +15,32 @@ class Trainer(object):
         self.step_size_val = self.val_gen.n // self.val_gen.batch_size
 
     def train(self, log_dir):
-        scheduler_callback = tf.keras.callbacks.LearningRateScheduler(self.scheduler)
         logdir = os.path.join(log_dir, datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
+        lr_reducer = tf.keras.callbacks.ReduceLROnPlateau\
+            (monitor='val_loss',
+             patience=12,
+             factor=0.5,
+             verbose=1)
         tensorboard_callback = tf.keras.callbacks.TensorBoard(
             log_dir=logdir,
             histogram_freq=1,
             write_graph=True,
             write_images=True,
-            update_freq="epoch",
-            profile_batch=150)
+            update_freq="epoch")
+
+        early_stopper = tf.keras.callbacks.EarlyStopping(
+            monitor='val_loss',
+            patience=2,
+            verbose=1)
+        checkpoint = tf.keras.callbacks.ModelCheckpoint('models/model.h5')
+
+        callbacks = [lr_reducer, tensorboard_callback, early_stopper, checkpoint]
 
         self.model.fit(
             x=self.train_gen,
-            steps_per_epoch=self.step_size_train,
+            steps_per_epoch=200,
             validation_data=self.val_gen,
-            validation_steps=self.step_size_val,
+            validation_steps=200,
             epochs=self.epoch,
-            callbacks=[scheduler_callback, tensorboard_callback]
+            callbacks=callbacks
         )
-
-    @staticmethod
-    def scheduler(epoch, lr):
-        if epoch < 15:
-            return lr
-        else:
-            return lr * tf.math.exp(-0.01)

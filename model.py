@@ -96,7 +96,7 @@ class FashionModel(object):
 
     @staticmethod
     def __model_architecture_state_of_art(input_shape, num_classes):
-        inception = InceptionV3(input_shape=input_shape, weights=None, include_top=False, pooling='avg')
+        inception = InceptionV3(input_shape=input_shape, weights='imagenet', include_top=False, pooling='avg')
         for layer in inception.layers[:-26]:
             layer.trainable = False
         for layer in inception.layers:
