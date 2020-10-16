@@ -55,6 +55,11 @@ parser.add_argument(
     type=str
 )
 
+parser.add_argument(
+    '--epoch',
+    help='Number of epochs to train.',
+    type=int
+)
 
 if __name__ == '__main__':
     args = parser.parse_args()
@@ -86,7 +91,7 @@ if __name__ == '__main__':
                     model=fm.model,
                     train_gen=train_dataset.train_generator,
                     val_gen=train_dataset.validation_generator,
-                    epoch=20,
+                    epoch=args.epoch,
                 )
                 trainer.train(log_dir=args.log_dir)
 

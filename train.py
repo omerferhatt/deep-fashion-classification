@@ -30,9 +30,15 @@ class Trainer(object):
 
         early_stopper = tf.keras.callbacks.EarlyStopping(
             monitor='val_loss',
-            patience=2,
+            patience=20,
             verbose=1)
-        checkpoint = tf.keras.callbacks.ModelCheckpoint('models/model.h5')
+
+        checkpoint = tf.keras.callbacks.ModelCheckpoint(
+            'models/model.h5',
+            monitor='val_accuracy',
+            save_weights_only=True,
+            mode='max',
+            save_best_only=True)
 
         callbacks = [lr_reducer, tensorboard_callback, early_stopper, checkpoint]
 
