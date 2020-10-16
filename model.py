@@ -13,18 +13,25 @@ class FashionModel(object):
     def load_model(self, path):
         self.model = load_model(path)
 
-    def create_model(self, input_shape=(128, 128, 3), batch_size=None, num_classes=32):
+    def create_model(self, input_shape=(128, 128, 3), batch_size=None, num_classes=32, comp=True, init_lr=0.001):
         self.model = self.__model_architecture(input_shape=input_shape, batch_size=batch_size, num_classes=num_classes)
+        if comp:
+            optimizer = tf.keras.optimizers.Adam(learning_rate=init_lr)
+            self.model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['accuracy'])
 
     @staticmethod
     def __model_architecture(input_shape, batch_size, num_classes):
         inp_layer = Input(shape=input_shape, batch_size=batch_size, name='input_layer')
 
-        conv1_1 = Conv2D(64, kernel_size=(5, 5), strides=(2, 2), padding='valid', name='conv1_1')(inp_layer)
+        conv1_1 = Conv2D(64, kernel_size=(7, 7), strides=(2, 2), padding='valid', name='conv1_1')(inp_layer)
         b_norm1_1 = BatchNormalization(name='b_norm1_1')(conv1_1)
         act1_1 = ReLU(name='act1_1')(b_norm1_1)
 
-        pool1 = MaxPool2D(pool_size=(2, 2), name='pool1')(act1_1)
+        conv1_2 = Conv2D(64, kernel_size=(5, 5), padding='valid', name='conv1_2')(act1_1)
+        b_norm1_2 = BatchNormalization(name='b_norm1_2')(conv1_2)
+        act1_2 = ReLU(name='act1_2')(b_norm1_2)
+
+        pool1 = MaxPool2D(pool_size=(2, 2), name='pool1')(act1_2)
 
         conv2_1 = Conv2D(64, kernel_size=(4, 4), padding='valid', name='conv2_1')(pool1)
         b_norm2_1 = BatchNormalization(name='b_norm2_1')(conv2_1)

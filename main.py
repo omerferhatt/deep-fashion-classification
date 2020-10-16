@@ -1,6 +1,9 @@
 import argparse
 from argparse import ArgumentError, ArgumentTypeError
 from inference import Inference
+from model import FashionModel
+from train import Trainer
+from data import TrainDataset
 
 class ArgumentSelectError(Exception):
     pass
@@ -48,7 +51,8 @@ parser.add_argument(
 
 parser.add_argument(
     '--log-dir',
-    help='Locate where will training logs will be saved.'
+    help='Locate where will training logs will be saved.',
+    type=str
 )
 
 
@@ -65,6 +69,28 @@ if __name__ == '__main__':
                 raise ArgumentSelectError('Train type not specified. Can not train!')
             else:
                 print('Training!')
+                train_dataset = TrainDataset(
+                    image_dir=args.train_data_dir,
+                    csv_path=f'data/dataset_csv/list_combined_{args.train_type}_small.tsv',
+                    train_type=args.train_type,
+                    batch_size=32,
+                    shuffle=True,
+                    random_seed=10
+                )
+
+                fm = FashionModel()
+                fm.create_model(num_classes=train_dataset.num_classes, batch_size=train_dataset.batch_size)
+                fm.model.summary()
+
+                trainer = Trainer(
+                    model=fm.model,
+                    train_gen=train_dataset.train_generator,
+                    val_gen=train_dataset.validation_generator,
+                    epoch=20,
+                )
+                trainer.train()
+
+                print('Training Finished!')
         elif args.predict:
             if not any([args.predict_type == pred_type for pred_type in total_types]):
                 raise ArgumentSelectError('Predict type not specified. Can not predict.')
