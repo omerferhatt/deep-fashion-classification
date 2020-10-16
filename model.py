@@ -4,6 +4,8 @@ from tensorflow.keras.layers import Input
 from tensorflow.keras.layers import Conv2D, Dense
 from tensorflow.keras.layers import MaxPool2D, GlobalAveragePooling2D
 from tensorflow.keras.layers import ReLU, Softmax, BatchNormalization, Dropout
+from tensorflow.keras.regularizers import l2
+from tensorflow.keras.applications.inception_v3 import InceptionV3
 
 
 class FashionModel(object):
@@ -13,14 +15,17 @@ class FashionModel(object):
     def load_model(self, path):
         self.model = load_model(path)
 
-    def create_model(self, input_shape=(192, 192, 3), num_classes=32, comp=True, init_lr=0.001):
-        self.model = self.__model_architecture(input_shape=input_shape, num_classes=num_classes)
+    def create_model(self, input_shape=(299, 299, 3), num_classes=32, comp=True, init_lr=0.0001):
+        self.model = self.__model_architecture_state_of_art(input_shape=input_shape, num_classes=num_classes)
         if comp:
-            optimizer = tf.keras.optimizers.Adam(learning_rate=init_lr)
-            self.model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['accuracy', tf.keras.metrics.TopKCategoricalAccuracy(k=3)])
+            optimizer = tf.keras.optimizers.SGD(learning_rate=init_lr, momentum=0.9, nesterov=True)
+            self.model.compile(
+                optimizer=optimizer,
+                loss='categorical_crossentropy',
+                metrics=['accuracy', tf.keras.metrics.TopKCategoricalAccuracy(k=3)])
 
     @staticmethod
-    def __model_architecture(input_shape, num_classes):
+    def __model_architecture_custom(input_shape, num_classes):
         inp_layer = Input(shape=input_shape, name='input_layer')
         b_norm_inp = BatchNormalization(name='b_norm_inp')(inp_layer)
 
@@ -87,7 +92,20 @@ class FashionModel(object):
         dense3 = Dense(num_classes, name='dense3')(b_norm7)
         out_act7 = Softmax(name='output_act7')(dense3)
 
-        return Model(inputs=inp_layer, outputs=out_act7)
+        return Model(inputs=inp_layer, outputs=out_act7, name='custom_model')
+
+    @staticmethod
+    def __model_architecture_state_of_art(input_shape, num_classes):
+        inception = InceptionV3(input_shape=input_shape, weights=None, include_top=False, pooling='avg')
+        for layer in inception.layers[:-26]:
+            layer.trainable = False
+        for layer in inception.layers:
+            if isinstance(layer, BatchNormalization):
+                layer.trainable = True
+        dense_1 = Dense(1024, activation='relu', kernel_regularizer=l2(0.001))(inception.output)
+        dense_2_output = Dense(num_classes, activation='softmax', name='output_dense')(dense_1)
+
+        return Model(inputs=inception.input, outputs=dense_2_output, name='inception_model')
 
 
 if __name__ == '__main__':

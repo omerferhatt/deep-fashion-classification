@@ -14,7 +14,9 @@ class TrainDataset(object):
         self.num_classes = 0
         self.dataframe = pd.read_csv(self.csv_path, sep='\t', index_col=None)
         self.datagen = ImageDataGenerator(
-            rotation_range=20,
+            rotation_range=30.,
+            shear_range=0.2,
+            zoom_range=0.2,
             width_shift_range=0.2,
             height_shift_range=0.2,
             horizontal_flip=True,
