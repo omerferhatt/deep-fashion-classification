@@ -39,4 +39,4 @@ class Trainer(object):
         if epoch < 15:
             return lr
         else:
-            return lr * tf.math.exp(-0.1)
+            return lr * tf.math.exp(-0.01)
