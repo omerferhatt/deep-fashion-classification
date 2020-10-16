@@ -13,7 +13,7 @@ class FashionModel(object):
     def load_model(self, path):
         self.model = load_model(path)
 
-    def create_model(self, input_shape=(128, 128, 3), num_classes=32, comp=True, init_lr=0.001):
+    def create_model(self, input_shape=(192, 192, 3), num_classes=32, comp=True, init_lr=0.001):
         self.model = self.__model_architecture(input_shape=input_shape, num_classes=num_classes)
         if comp:
             optimizer = tf.keras.optimizers.Adam(learning_rate=init_lr)
@@ -23,7 +23,7 @@ class FashionModel(object):
     def __model_architecture(input_shape, num_classes):
         inp_layer = Input(shape=input_shape, name='input_layer')
 
-        conv1_1 = Conv2D(64, kernel_size=(7, 7), strides=(2, 2), padding='valid', name='conv1_1')(inp_layer)
+        conv1_1 = Conv2D(32, kernel_size=(5, 5), padding='valid', name='conv1_1')(inp_layer)
         b_norm1_1 = BatchNormalization(name='b_norm1_1')(conv1_1)
         act1_1 = ReLU(name='act1_1')(b_norm1_1)
 
@@ -37,25 +37,39 @@ class FashionModel(object):
         b_norm2_1 = BatchNormalization(name='b_norm2_1')(conv2_1)
         act2_1 = ReLU(name='act2_1')(b_norm2_1)
 
-        conv2_2 = Conv2D(128, kernel_size=(4, 4), padding='valid', name='conv2_2')(act2_1)
+        conv2_2 = Conv2D(64, kernel_size=(4, 4), padding='valid', name='conv2_2')(act2_1)
         b_norm2_2 = BatchNormalization(name='b_norm2_2')(conv2_2)
         act2_2 = ReLU(name='act2_2')(b_norm2_2)
 
         pool2 = MaxPool2D(pool_size=(2, 2), name='pool2')(act2_2)
 
-        conv3_1 = Conv2D(128, kernel_size=(4, 4), padding='valid', name='conv3_1')(pool2)
+        conv3_1 = Conv2D(128, kernel_size=(3, 3), padding='valid', name='conv3_1')(pool2)
         b_norm3_1 = BatchNormalization(name='b_norm3_1')(conv3_1)
         act3_1 = ReLU(name='act3_1')(b_norm3_1)
 
-        conv3_2 = Conv2D(256, kernel_size=(3, 3), padding='valid', name='conv3_2')(act3_1)
+        conv3_2 = Conv2D(128, kernel_size=(3, 3), padding='valid', name='conv3_2')(act3_1)
         b_norm3_2 = BatchNormalization(name='b_norm3_2')(conv3_2)
         act3_2 = ReLU(name='act3_2')(b_norm3_2)
 
-        conv3_3 = Conv2D(512, kernel_size=(3, 3), padding='valid', name='conv3_3')(act3_2)
+        conv3_3 = Conv2D(128, kernel_size=(3, 3), padding='valid', name='conv3_3')(act3_2)
         b_norm3_3 = BatchNormalization(name='b_norm3_3')(conv3_3)
         act3_3 = ReLU(name='act3_3')(b_norm3_3)
 
-        gap = GlobalAveragePooling2D(name='gap')(act3_3)
+        pool3 = MaxPool2D(pool_size=(2, 2), name='pool3')(act3_3)
+
+        conv4_1 = Conv2D(256, kernel_size=(3, 3), padding='valid', name='conv4_1')(pool3)
+        b_norm4_1 = BatchNormalization(name='b_norm4_1')(conv4_1)
+        act4_1 = ReLU(name='act4_1')(b_norm4_1)
+
+        conv4_2 = Conv2D(256, kernel_size=(3, 3), padding='valid', name='conv4_2')(act4_1)
+        b_norm4_2 = BatchNormalization(name='b_norm4_2')(conv4_2)
+        act4_2 = ReLU(name='act4_2')(b_norm4_2)
+
+        conv4_3 = Conv2D(512, kernel_size=(3, 3), padding='valid', name='conv4_3')(act4_2)
+        b_norm4_3 = BatchNormalization(name='b_norm4_3')(conv4_3)
+        act4_3 = ReLU(name='act4_3')(b_norm4_3)
+
+        gap = GlobalAveragePooling2D(name='gap')(act4_3)
         drop1 = Dropout(0.3, name='drop1')(gap)
 
         dense1 = Dense(512, name='dense1')(drop1)

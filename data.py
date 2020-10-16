@@ -37,7 +37,7 @@ class TrainDataset(object):
             seed=self.random_seed,
             shuffle=self.shuffle,
             class_mode="raw",
-            target_size=(128, 128))
+            target_size=(192, 192))
 
         valid_generator = self.datagen.flow_from_dataframe(
             dataframe=self.dataframe,
@@ -49,7 +49,7 @@ class TrainDataset(object):
             seed=self.random_seed,
             shuffle=self.shuffle,
             class_mode="raw",
-            target_size=(128, 128))
+            target_size=(192, 192))
 
         return train_generator, valid_generator
 
