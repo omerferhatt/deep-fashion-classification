@@ -23,7 +23,7 @@ class TrainDataset(object):
             height_shift_range=0.2,
             horizontal_flip=True,
             rescale=1./255,
-            validation_split=0.2)
+            validation_split=0.1)
 
         self.train_generator, self.validation_generator = self.__create_train_valid_gen()
 

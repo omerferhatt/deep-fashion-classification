@@ -20,7 +20,7 @@ class Trainer(object):
         lr_reducer = tf.keras.callbacks.ReduceLROnPlateau\
             (monitor='val_loss',
              patience=10,
-             factor=0.8,
+             factor=0.7,
              verbose=1)
         tensorboard_callback = tf.keras.callbacks.TensorBoard(
             log_dir=logdir,
