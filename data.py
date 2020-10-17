@@ -4,13 +4,15 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 
 class TrainDataset(object):
-    def __init__(self, image_dir, csv_path, train_type, batch_size, random_seed, shuffle):
+    def __init__(self, image_dir, csv_path, train_type, batch_size, random_seed, shuffle, image_shape):
         self.image_dir = image_dir
         self.csv_path = csv_path
         self.train_type = train_type
         self.batch_size = batch_size
         self.random_seed = random_seed
-        self.shuffle= shuffle
+        self.shuffle = shuffle
+        self.image_shape = image_shape
+
         self.num_classes = 0
         self.dataframe = pd.read_csv(self.csv_path, sep='\t', index_col=None)
         self.datagen = ImageDataGenerator(
@@ -39,7 +41,7 @@ class TrainDataset(object):
             seed=self.random_seed,
             shuffle=self.shuffle,
             class_mode="raw",
-            target_size=(192, 192))
+            target_size=self.image_shape)
 
         valid_generator = self.datagen.flow_from_dataframe(
             dataframe=self.dataframe,
@@ -51,7 +53,7 @@ class TrainDataset(object):
             seed=self.random_seed,
             shuffle=self.shuffle,
             class_mode="raw",
-            target_size=(192, 192))
+            target_size=self.image_shape)
 
         return train_generator, valid_generator
 
@@ -63,5 +65,6 @@ if __name__ == '__main__':
         train_type='attribute1',
         batch_size=32,
         shuffle=True,
-        random_seed=10
+        random_seed=10,
+        image_shape=(224, 224)
     )
