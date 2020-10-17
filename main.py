@@ -21,7 +21,7 @@ def training():
     )
 
     fm = FashionModel()
-    fm.create_model(num_classes=train_dataset.num_classes, input_shape=args.input_shape)
+    fm.create_model(num_classes=train_dataset.num_classes, input_shape=[args.input_shape[0], args.input_shape[1], 3])
     fm.model.summary()
 
     trainer = Trainer(
