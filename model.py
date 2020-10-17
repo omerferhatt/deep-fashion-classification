@@ -21,7 +21,7 @@ class FashionModel(object):
             optimizer = tf.keras.optimizers.SGD(learning_rate=init_lr, momentum=0.9, nesterov=True)
             self.model.compile(
                 optimizer=optimizer,
-                loss='categorical_crossentropy',
+                loss='binary_crossentropy',
                 metrics=['accuracy', tf.keras.metrics.TopKCategoricalAccuracy(k=3)])
 
     @staticmethod
@@ -99,11 +99,8 @@ class FashionModel(object):
         inception = InceptionV3(input_shape=input_shape, weights='imagenet', include_top=False, pooling='avg')
         for layer in inception.layers[:-26]:
             layer.trainable = False
-        for layer in inception.layers:
-            if isinstance(layer, BatchNormalization):
-                layer.trainable = True
         dense_1 = Dense(1024, activation='relu', kernel_regularizer=l2(0.001))(inception.output)
-        dense_2_output = Dense(num_classes, activation='softmax', name='output_dense')(dense_1)
+        dense_2_output = Dense(num_classes, activation='sigmoid', name='output_dense')(dense_1)
 
         return Model(inputs=inception.input, outputs=dense_2_output, name='inception_model')
 

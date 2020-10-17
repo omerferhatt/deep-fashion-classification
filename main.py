@@ -9,7 +9,7 @@ class ArgumentSelectError(Exception):
     pass
 
 
-total_types = ['category', 'attribute1', 'attribute2', 'attribute3', 'attribute4', 'attribute5']
+total_types = ['category', 'attribute', 'attribute1', 'attribute2', 'attribute3', 'attribute4', 'attribute5']
 
 parser = argparse.ArgumentParser(
     prog='Fashion Category and Attribute Prediction',
