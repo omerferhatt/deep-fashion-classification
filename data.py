@@ -1,12 +1,14 @@
 import numpy as np
 import pandas as pd
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.applications.resnet50 import preprocess_input
 
 
 class TrainDataset(object):
-    def __init__(self, image_dir, csv_path, train_type, batch_size, random_seed, shuffle, image_shape):
+    def __init__(self, image_dir, csv_path_train, csv_path_val, train_type, batch_size, random_seed, shuffle, image_shape):
         self.image_dir = image_dir
-        self.csv_path = csv_path
+        self.csv_path_train = csv_path_train
+        self.csv_path_val = csv_path_val
         self.train_type = train_type
         self.batch_size = batch_size
         self.random_seed = random_seed
@@ -14,41 +16,43 @@ class TrainDataset(object):
         self.image_shape = image_shape
 
         self.num_classes = 0
-        self.dataframe = pd.read_csv(self.csv_path, sep='\t', index_col=None)
-        self.datagen = ImageDataGenerator(
-            rotation_range=30.,
+        self.dataframe_train = pd.read_csv(self.csv_path_train, sep='\t', index_col=None)
+        self.dataframe_val = pd.read_csv(self.csv_path_val, sep='\t', index_col=None)
+
+        self.datagen_train = ImageDataGenerator(
+            rotation_range=25.,
             shear_range=0.2,
             zoom_range=0.2,
             width_shift_range=0.2,
             height_shift_range=0.2,
             horizontal_flip=True,
-            rescale=1./255,
-            validation_split=0.1)
+            preprocessing_function=preprocess_input,
+            rescale=1./255)
+
+        self.datagen_val = ImageDataGenerator(rescale=1./255)
 
         self.train_generator, self.validation_generator = self.__create_train_valid_gen()
 
     def __create_train_valid_gen(self):
-        __y_cols = [col for col in self.dataframe.columns if self.train_type in col]
+        __y_cols = [col for col in self.dataframe_train.columns if self.train_type in col]
         self.num_classes = len(__y_cols)
 
-        train_generator = self.datagen.flow_from_dataframe(
-            dataframe=self.dataframe,
+        train_generator = self.datagen_train.flow_from_dataframe(
+            dataframe=self.dataframe_train,
             directory='data/',
             x_col='image_name',
             y_col = __y_cols,
-            subset='training',
             batch_size=self.batch_size,
             seed=self.random_seed,
             shuffle=self.shuffle,
             class_mode="raw",
             target_size=self.image_shape)
 
-        valid_generator = self.datagen.flow_from_dataframe(
-            dataframe=self.dataframe,
+        valid_generator = self.datagen_val.flow_from_dataframe(
+            dataframe=self.dataframe_val,
             directory='data/',
             x_col='image_name',
             y_col = __y_cols,
-            subset='validation',
             batch_size=self.batch_size,
             seed=self.random_seed,
             shuffle=self.shuffle,
@@ -61,8 +65,9 @@ class TrainDataset(object):
 if __name__ == '__main__':
     train_dataset = TrainDataset(
         image_dir='data/',
-        csv_path='data/dataset_csv/list_combined_attr1_small.tsv',
-        train_type='attribute1',
+        csv_path_train='data/dataset_csv/list_combined_category_small_train.tsv',
+        csv_path_val='data/dataset_csv/list_combined_category_small_val.tsv',
+        train_type='category',
         batch_size=32,
         shuffle=True,
         random_seed=10,

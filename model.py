@@ -15,10 +15,10 @@ class FashionModel(object):
     def load_model(self, path):
         self.model = load_model(path)
 
-    def create_model(self, input_shape=(224, 224, 3), num_classes=32, comp=True, init_lr=0.0005):
+    def create_model(self, input_shape=(224, 224, 3), num_classes=32, comp=True, init_lr=0.0002):
         self.model = self.__model_architecture_state_of_art(input_shape=input_shape, num_classes=num_classes)
         if comp:
-            optimizer = tf.keras.optimizers.SGD(learning_rate=init_lr, momentum=0.9, nesterov=True)
+            optimizer = tf.keras.optimizers.Adam(learning_rate=init_lr)
             self.model.compile(
                 optimizer=optimizer,
                 loss='categorical_crossentropy',

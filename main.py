@@ -12,11 +12,12 @@ class ArgumentSelectError(Exception):
 def training():
     train_dataset = TrainDataset(
         image_dir=args.train_data_dir,
-        csv_path=f'data/dataset_csv/list_combined_{args.train_type}_small.tsv',
+        csv_path_train=f'data/dataset_csv/list_combined_{args.train_type}_small_train.tsv',
+        csv_path_val=f'data/dataset_csv/list_combined_{args.train_type}_small_val.tsv',
         train_type=args.train_type,
-        batch_size=32,
+        batch_size=16,
         shuffle=True,
-        random_seed=20,
+        random_seed=40,
         image_shape=args.input_shape
     )
 

@@ -32,7 +32,7 @@ def preprocess_list_category_img(path):
 
 
 def preprocess_list_bbox(path):
-    list_bbox_f = open('raw_txt/list_bbox.txt', 'r')
+    list_bbox_f = open(path, 'r')
     total_row = list_bbox_f.readline().split()
     columns = list_bbox_f.readline().split()
 
@@ -51,8 +51,31 @@ def preprocess_list_bbox(path):
     return image_names.reshape(-1, 1), bboxes, columns
 
 
+def preprocess_list_eval_partition(path):
+    list_eval_partition = open(path, 'r')
+    total_row = list_eval_partition.readline().split()
+    columns = list_eval_partition.readline().split()
+
+    image_names = []
+    eval_status = []
+
+    for index, i in enumerate(list_eval_partition):
+        image_names.append(i.split()[0])
+        eval_status.append(i.split()[1])
+
+    image_names = np.array(image_names, dtype=np.str)
+    eval_status = np.array(eval_status, dtype=np.str)
+
+    list_eval_partition.close()
+
+    return image_names.reshape(-1, 1), eval_status.reshape(-1, 1), columns
+
+
 if __name__ == '__main__':
     image_names, bboxes, columns = preprocess_list_bbox('raw_txt/list_bbox.txt')
-    image_names2, categories, columns2 = preprocess_list_category_img('raw_txt/list_category_img.txt')
-    df = pd.DataFrame(np.concatenate([image_names, bboxes, categories], axis=1), columns=columns+columns2[1:])
-    df.to_csv('dataset_csv/list_category_bbox_combined.tsv', sep='\t', index=False)
+    _, categories, columns2 = preprocess_list_category_img('raw_txt/list_category_img.txt')
+    _, eval_status, columns3 = preprocess_list_eval_partition('raw_txt/list_eval_partition.txt')
+    df = pd.DataFrame(np.concatenate([image_names, eval_status, bboxes, categories], axis=1), columns=columns3+columns2[1:]+columns[1:])
+    for t in ['train', 'val', 'test']:
+        df[df['evaluation_status'] == t].to_csv('dataset_csv/list_combined_category_small_' + t + '.tsv', sep='\t',
+                                                      index=False)
