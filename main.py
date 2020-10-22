@@ -22,10 +22,9 @@ def training():
     )
 
     fm = FashionModel()
-    if args.checkpoint is None:
-        fm.create_model(num_classes=train_dataset.num_classes, input_shape=[args.input_shape[0], args.input_shape[1], 3])
-    else:
-        fm.load_model(args.checkpoint, comp=True)
+    fm.create_model(num_classes=train_dataset.num_classes, input_shape=[args.input_shape[0], args.input_shape[1], 3])
+    if args.checkpoint is not None:
+        fm.model.load_weights(args.checkpoint)
 
     fm.model.summary()
 
