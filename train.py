@@ -19,7 +19,7 @@ class Trainer(object):
         logdir = os.path.join(log_dir, datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
         lr_reducer = tf.keras.callbacks.ReduceLROnPlateau\
             (monitor='val_loss',
-             patience=10,
+             patience=5,
              factor=0.7,
              verbose=1)
         tensorboard_callback = tf.keras.callbacks.TensorBoard(
@@ -31,7 +31,7 @@ class Trainer(object):
 
         early_stopper = tf.keras.callbacks.EarlyStopping(
             monitor='val_loss',
-            patience=25,
+            patience=10,
             verbose=1)
 
         checkpoint = tf.keras.callbacks.ModelCheckpoint(
@@ -49,7 +49,8 @@ class Trainer(object):
                 validation_data=self.val_gen,
                 validation_steps=self.step,
                 epochs=self.epoch,
-                callbacks=callbacks
+                callbacks=callbacks,
+                verbose=2
             )
         else:
             self.model.fit(
@@ -58,5 +59,6 @@ class Trainer(object):
                 validation_data=self.val_gen,
                 validation_steps=self.step_size_val,
                 epochs=self.epoch,
-                callbacks=callbacks
+                callbacks=callbacks,
+                verbose=2
             )

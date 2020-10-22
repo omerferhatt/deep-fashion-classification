@@ -17,7 +17,7 @@ def training():
         train_type=args.train_type,
         batch_size=16,
         shuffle=True,
-        random_seed=40,
+        random_seed=60,
         image_shape=args.input_shape
     )
 

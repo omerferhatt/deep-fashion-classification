@@ -15,9 +15,9 @@ class FashionModel(object):
     def load_model(self, path, comp=False):
         self.model = load_model(path)
         if comp:
-            self.model = self.compile(self.model, 0.0005)
+            self.model = self.compile(self.model, 0.0002)
 
-    def create_model(self, input_shape=(224, 224, 3), num_classes=32, comp=True, init_lr=0.0005):
+    def create_model(self, input_shape=(224, 224, 3), num_classes=32, comp=True, init_lr=0.0002):
         self.model = self.__model_architecture_state_of_art(input_shape=input_shape, num_classes=num_classes)
         if comp:
             self.model = self.compile(self.model, init_lr)
