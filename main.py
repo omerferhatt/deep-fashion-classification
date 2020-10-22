@@ -22,7 +22,11 @@ def training():
     )
 
     fm = FashionModel()
-    fm.create_model(num_classes=train_dataset.num_classes, input_shape=[args.input_shape[0], args.input_shape[1], 3])
+    if args.checkpoint is None:
+        fm.create_model(num_classes=train_dataset.num_classes, input_shape=[args.input_shape[0], args.input_shape[1], 3])
+    else:
+        fm.load_model(args.checkpoint, comp=True)
+
     fm.model.summary()
 
     trainer = Trainer(
@@ -70,6 +74,9 @@ parser.add_argument('--epoch', type=int,
                     help='Number of epochs to train.')
 
 parser.add_argument('--step', type=int,
+                    help='Number of epochs to train.')
+
+parser.add_argument('--checkpoint', type=str, default=None,
                     help='Number of epochs to train.')
 
 parser.add_argument('--log-dir', type=str,

@@ -71,11 +71,41 @@ def preprocess_list_eval_partition(path):
     return image_names.reshape(-1, 1), eval_status.reshape(-1, 1), columns
 
 
-if __name__ == '__main__':
+def preprocess_list_attr_img(path):
+    pass
+
+
+def preprocess_attr_cloth(path):
+    attr_cloth = open(path, 'r')
+    total_attribute = attr_cloth.readline().split()
+    columns = attr_cloth.readline().split()
+
+    attribute_names = []
+    attribute_types = []
+
+    for index, i in enumerate(attr_cloth):
+        attribute_names.append(i.split()[0])
+        attribute_types.append(i.split()[-1])
+
+    attribute_names = np.array(attribute_names, dtype=np.str)
+    attribute_types = np.array(attribute_types, dtype=np.str)
+
+    attr_cloth.close()
+
+    return attribute_names.reshape(-1, 1), attribute_types.reshape(-1, 1), columns
+
+
+def create_category_dataset():
     image_names, bboxes, columns = preprocess_list_bbox('raw_txt/list_bbox.txt')
     _, categories, columns2 = preprocess_list_category_img('raw_txt/list_category_img.txt')
     _, eval_status, columns3 = preprocess_list_eval_partition('raw_txt/list_eval_partition.txt')
-    df = pd.DataFrame(np.concatenate([image_names, eval_status, bboxes, categories], axis=1), columns=columns3+columns2[1:]+columns[1:])
+    df = pd.DataFrame(np.concatenate([image_names, eval_status, bboxes, categories], axis=1),
+                      columns=columns3 + columns[1:] + columns2[1:])
     for t in ['train', 'val', 'test']:
         df[df['evaluation_status'] == t].to_csv('dataset_csv/list_combined_category_small_' + t + '.tsv', sep='\t',
-                                                      index=False)
+                                                index=False)
+
+
+if __name__ == '__main__':
+    # create_category_dataset()
+    attr_names, attr_types, cols = preprocess_attr_cloth('raw_txt/list_attr_cloth.txt')
